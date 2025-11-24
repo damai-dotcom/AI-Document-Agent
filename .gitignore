@@ -73,3 +73,36 @@ htmlcov/
 .mypy_cache/
 .dmypy.json
 dmypy.json
+
+# Frontend dependencies
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+
+# Frontend cache
+frontend/.cache/
+frontend/.npm/
+frontend/.yarn/
+
+# Package manager files
+frontend/package-lock.json
+frontend/yarn.lock
+
+# Model files (keep small config files)
+models/*/
+!models/*/*.json
+!models/*/*.md
+!models/*/.gitkeep
+
+# Large data files
+*.pkl
+*.pickle
+*.h5
+*.hdf5
+
+# ChromaDB (optional - comment out if you want to include)
+# chroma_db/
+
+# Confluence data
+data/*.json
+!data/.gitkeep
