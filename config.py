@@ -21,7 +21,7 @@ class Config:
     
     # Model configuration
     SENTENCE_TRANSFORMER_MODEL = 'paraphrase-multilingual-MiniLM-L12-v2'
-    MODEL_CACHE_PATH = r'e:\development\confluence_finder\model_cache'
+    MODEL_CACHE_PATH = os.getenv('MODEL_CACHE_PATH', './model_cache')
     
     # AWS Bedrock configuration
     AWS_REGION = os.getenv('AWS_REGION', 'us-east-1')

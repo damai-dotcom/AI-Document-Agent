@@ -12,16 +12,69 @@
   .loading-dots {
     @apply inline-flex space-x-1;
   }
-  
+
   .loading-dots span {
     @apply w-2 h-2 bg-primary-500 rounded-full animate-pulse;
   }
-  
+
   .loading-dots span:nth-child(2) {
     animation-delay: 0.2s;
   }
-  
+
   .loading-dots span:nth-child(3) {
     animation-delay: 0.4s;
+  }
+
+  /* Custom scrollbar styles */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 10px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+  }
+
+  /* Message bubble animation */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .message-fade-in {
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  /* Typewriter cursor effect */
+  .typing-cursor::after {
+    content: '|';
+    animation: blink 1s infinite;
+    color: #3b82f6;
+  }
+
+  @keyframes blink {
+    0%,
+    50% {
+      opacity: 1;
+    }
+    51%,
+    100% {
+      opacity: 0;
+    }
   }
 }

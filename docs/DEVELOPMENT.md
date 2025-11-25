@@ -1,59 +1,64 @@
-# Confluence Finder 开发指南
+# Confluence Finder Development Guide
 
-## 🎯 项目概述
+## 🎯 Project Overview
 
-这是一个为期一周开发的AI驱动Confluence文档查找系统，旨在解决企业内部Confluence文档难以查找的问题。
+This is an AI-driven Confluence document search system developed in one week, aimed at solving the problem of difficult-to-find internal Confluence documents within enterprises.
 
-## 🏗️ 系统架构
+## 🏗️ System Architecture
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   React前端     │    │   Python后端    │    │  Confluence API │
+│   React Frontend│    │   Python Backend│    │  Confluence API │
 │                 │    │                 │    │                 │
-│ - 用户界面      │◄──►│ - 搜索API       │◄──►│ - 文档获取      │
-│ - 结果展示      │    │ - AI问答        │    │ - 空间管理      │
-│ - 管理面板      │    │ - 向量搜索      │    │                 │
+│ - User Interface│◄──►│ - Search API    │◄──►│ - Document Fetch│
+│ - Result Display│    │ - AI Q&A        │    │ - Space Management│
+│ - Admin Panel   │    │ - Vector Search │    │                 │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
                               │
                               ▼
                        ┌─────────────────┐
                        │   ChromaDB      │
                        │                 │
-                       │ - 向量存储      │
-                       │ - 语义搜索      │
-                       │ - 文档索引      │
+                       │ - Vector Storage│
+                       │ - Semantic Search│
+                       │ - Document Index│
                        └─────────────────┘
 ```
 
-## 🚀 快速开始
+## 🚀 Quick Start
 
-### 1. 环境准备
+### 1. Environment Setup
 
-**必需软件：**
+**Required Software:**
+
 - Node.js 16+
 - Python 3.8+
 - OpenAI API Key
-- Confluence访问权限
+- Confluence access permissions
 
-### 2. 配置步骤
+### 2. Configuration Steps
 
-1. **克隆项目**
+1. **Clone Project**
+
 ```bash
 git clone <repository-url>
 cd confluence_finder
 ```
 
-2. **安装依赖**
+2. **Install Dependencies**
+
 ```bash
 npm run install:all
 ```
 
-3. **配置环境变量**
+3. **Configure Environment Variables**
+
 ```bash
 cp backend/.env.example backend/.env
 ```
 
-编辑 `backend/.env`：
+Edit `backend/.env`:
+
 ```env
 OPENAI_API_KEY=your_openai_api_key
 CONFLUENCE_URL=https://your-domain.atlassian.net
@@ -61,7 +66,8 @@ CONFLUENCE_USERNAME=your_email@example.com
 CONFLUENCE_API_TOKEN=your_api_token
 ```
 
-4. **启动应用**
+4. **Start Application**
+
 ```bash
 # Windows
 start.bat
@@ -71,141 +77,156 @@ start.bat
 npm run dev
 ```
 
-## 🔧 核心功能
+## 🔧 Core Features
 
-### 1. 智能搜索
-- 基于语义的文档检索
-- AI驱动的答案生成
-- 相关度评分排序
+### 1. Smart Search
 
-### 2. 文档索引
-- 自动从Confluence同步文档
-- 智能文本分块处理
-- 向量化存储
+- Semantic-based document retrieval
+- AI-driven answer generation
+- Relevance score ranking
 
-### 3. 用户界面
-- 现代化React界面
-- 响应式设计
-- 实时搜索反馈
+### 2. Document Indexing
 
-## 📁 项目结构
+- Automatic document sync from Confluence
+- Intelligent text chunking
+- Vectorized storage
+
+### 3. User Interface
+
+- Modern React interface
+- Responsive design
+- Real-time search feedback
+
+## 📁 Project Structure
 
 ```
 confluence_finder/
-├── frontend/                 # React前端
+├── frontend/                 # React frontend
 │   ├── src/
-│   │   ├── components/      # React组件
-│   │   ├── App.tsx         # 主应用
-│   │   └── main.tsx        # 入口文件
+│   │   ├── components/      # React components
+│   │   ├── App.tsx         # Main application
+│   │   └── main.tsx        # Entry file
 │   ├── package.json
 │   └── vite.config.ts
-├── backend/                 # Python后端
-│   ├── app.py              # Flask应用
-│   ├── requirements.txt    # Python依赖
-│   └── .env.example        # 环境变量模板
-├── docs/                   # 文档
-├── start.bat              # Windows启动脚本
-├── deploy.sh              # Linux部署脚本
+├── backend/                 # Python backend
+│   ├── app.py              # Flask application
+│   ├── requirements.txt    # Python dependencies
+│   └── .env.example        # Environment variable template
+├── docs/                   # Documentation
+├── start.bat              # Windows startup script
+├── deploy.sh              # Linux deployment script
 └── README.md
 ```
 
-## 🛠️ 开发指南
+## 🛠️ Development Guide
 
-### 前端开发
+### Frontend Development
+
 ```bash
 cd frontend
-npm run dev    # 开发服务器
-npm run build  # 生产构建
+npm run dev    # Development server
+npm run build  # Production build
 ```
 
-### 后端开发
+### Backend Development
+
 ```bash
 cd backend
-python app.py  # 启动Flask服务器
+python app.py  # Start Flask server
 ```
 
-### API接口
+### API Endpoints
 
-**搜索文档**
+**Search Documents**
+
 ```
 POST /api/search
 {
-  "query": "如何申请年假？"
+  "query": "How to apply for annual leave?"
 }
 ```
 
-**索引文档**
+**Index Documents**
+
 ```
 POST /api/index
 ```
 
-## 🔍 技术细节
+## 🔍 Technical Details
 
-### 向量搜索
-- 使用 `SentenceTransformer` 生成文档嵌入
-- ChromaDB 存储和检索向量
-- 余弦相似度计算相关度
+### Vector Search
 
-### AI问答
-- OpenAI GPT-3.5-turbo 模型
-- 基于检索到的文档生成答案
-- 支持上下文对话
+- Use `SentenceTransformer` to generate document embeddings
+- ChromaDB for storing and retrieving vectors
+- Cosine similarity for relevance calculation
 
-### 文档处理
-- HTML内容清理
-- 智能文本分块
-- Token限制管理
+### AI Q&A
 
-## 📈 性能优化
+- OpenAI GPT-3.5-turbo model
+- Generate answers based on retrieved documents
+- Support contextual conversations
 
-1. **缓存策略**
-   - 文档嵌入缓存
-   - 搜索结果缓存
+### Document Processing
 
-2. **数据库优化**
-   - 向量索引优化
-   - 批量处理
+- HTML content cleaning
+- Intelligent text chunking
+- Token limit management
 
-3. **前端优化**
-   - 组件懒加载
-   - 搜索防抖
+## 📈 Performance Optimization
 
-## 🚨 注意事项
+1. **Caching Strategy**
 
-1. **API限制**
-   - OpenAI API调用限制
-   - Confluence API速率限制
+   - Document embedding cache
+   - Search result cache
 
-2. **安全性**
-   - API密钥安全存储
-   - 用户权限验证
+2. **Database Optimization**
 
-3. **扩展性**
-   - 支持多数据源
-   - 分布式部署
+   - Vector index optimization
+   - Batch processing
 
-## 🎨 UI/UX设计原则
+3. **Frontend Optimization**
+   - Component lazy loading
+   - Search debouncing
 
-1. **简洁性** - 清晰的视觉层次
-2. **响应性** - 适配各种设备
-3. **可访问性** - 无障碍设计
-4. **反馈性** - 实时状态提示
+## 🚨 Important Notes
 
-## 🏆 比赛优势
+1. **API Limitations**
 
-1. **技术创新** - AI+向量搜索
-2. **实用价值** - 解决实际痛点
-3. **用户体验** - 简单易用
-4. **可扩展性** - 支持企业级部署
+   - OpenAI API call limits
+   - Confluence API rate limits
 
-## 📞 技术支持
+2. **Security**
 
-如有问题，请检查：
-1. 环境变量配置
-2. API密钥有效性
-3. 网络连接状态
-4. 依赖包版本
+   - Secure storage of API keys
+   - User permission verification
+
+3. **Scalability**
+   - Support for multiple data sources
+   - Distributed deployment
+
+## 🎨 UI/UX Design Principles
+
+1. **Simplicity** - Clear visual hierarchy
+2. **Responsiveness** - Adapt to various devices
+3. **Accessibility** - Barrier-free design
+4. **Feedback** - Real-time status indicators
+
+## 🏆 Competitive Advantages
+
+1. **Technical Innovation** - AI + Vector Search
+2. **Practical Value** - Solves real pain points
+3. **User Experience** - Simple and easy to use
+4. **Scalability** - Supports enterprise deployment
+
+## 📞 Technical Support
+
+If you encounter issues, please check:
+
+1. Environment variable configuration
+2. API key validity
+3. Network connection status
+4. Dependency package versions
 
 ---
 
-祝比赛顺利！🎉
+Good luck with the competition! 🎉

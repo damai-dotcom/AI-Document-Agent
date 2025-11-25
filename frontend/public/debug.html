@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>搜索匹配调试页面</title>
+    <title>Search Matching Debug Page</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -12,20 +13,24 @@
             padding: 20px;
             background-color: #f5f5f5;
         }
+
         .container {
             background: white;
             border-radius: 8px;
             padding: 30px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
+
         h1 {
             color: #333;
             text-align: center;
             margin-bottom: 30px;
         }
+
         .search-form {
             margin-bottom: 30px;
         }
+
         .search-input {
             width: 100%;
             padding: 12px;
@@ -34,10 +39,12 @@
             font-size: 16px;
             margin-bottom: 10px;
         }
+
         .search-input:focus {
             outline: none;
             border-color: #007bff;
         }
+
         .search-btn {
             background: #007bff;
             color: white;
@@ -48,16 +55,20 @@
             cursor: pointer;
             width: 100%;
         }
+
         .search-btn:hover {
             background: #0056b3;
         }
+
         .search-btn:disabled {
             background: #ccc;
             cursor: not-allowed;
         }
+
         .results {
             margin-top: 20px;
         }
+
         .debug-info {
             background: #f8f9fa;
             border: 1px solid #e9ecef;
@@ -67,6 +78,7 @@
             font-family: monospace;
             font-size: 14px;
         }
+
         .result-item {
             border: 1px solid #ddd;
             border-radius: 6px;
@@ -74,11 +86,13 @@
             margin-bottom: 15px;
             background: white;
         }
+
         .result-title {
             font-weight: bold;
             color: #333;
             margin-bottom: 8px;
         }
+
         .result-score {
             background: #e7f3ff;
             color: #0066cc;
@@ -87,12 +101,14 @@
             font-size: 12px;
             margin-left: 10px;
         }
+
         .result-content {
             color: #666;
             line-height: 1.5;
             max-height: 100px;
             overflow-y: auto;
         }
+
         .keywords {
             background: #fff3cd;
             border: 1px solid #ffeaa7;
@@ -100,6 +116,7 @@
             padding: 8px;
             margin-bottom: 15px;
         }
+
         .keyword {
             display: inline-block;
             background: #007bff;
@@ -109,11 +126,13 @@
             margin: 2px;
             font-size: 12px;
         }
+
         .loading {
             text-align: center;
             color: #666;
             padding: 20px;
         }
+
         .error {
             background: #f8d7da;
             border: 1px solid #f5c6cb;
@@ -124,23 +143,20 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
-        <h1>🔍 搜索匹配调试工具</h1>
+        <h1>🔍 Search Matching Debug Tool</h1>
         <p style="text-align: center; color: #666; margin-bottom: 30px;">
-            测试文档匹配逻辑，查看LLM调用前的搜索结果
+            Test document matching logic and view search results before LLM calls
         </p>
 
         <form class="search-form" id="searchForm">
-            <input 
-                type="text" 
-                id="searchInput" 
-                class="search-input" 
-                placeholder="输入问题，例如：我们公司的请假流程是怎么样的？"
-                value="我们公司的请假流程是怎么样的"
-            >
+            <input type="text" id="searchInput" class="search-input"
+                placeholder="Enter a question, e.g.: What is our company's leave process?"
+                value="What is our company's leave process">
             <button type="submit" class="search-btn" id="searchBtn">
-                🔍 测试搜索匹配
+                🔍 Test Search Matching
             </button>
         </form>
 
@@ -148,20 +164,20 @@
     </div>
 
     <script>
-        const searchForm = document.getElementById('searchForm');
-        const searchInput = document.getElementById('searchInput');
-        const searchBtn = document.getElementById('searchBtn');
-        const resultsDiv = document.getElementById('results');
+        const searchForm = document.getElementById('searchForm')
+        const searchInput = document.getElementById('searchInput')
+        const searchBtn = document.getElementById('searchBtn')
+        const resultsDiv = document.getElementById('results')
 
-        // 预设测试问题（包含同义词测试和Token压力测试）
+        // Preset test questions (including synonym tests and token pressure tests)
         const testQueries = [
-            '我们公司的请假流程是怎么样的',
-            '如何申请年假',
-            '员工福利有哪些',
-            '新员工入职流程',
-            '绩效考核制度是什么',
-            '离职需要办理什么手续',
-            '培训发展机会',
+            'What is our company\'s leave process',
+            'How to apply for annual leave',
+            'What are the employee benefits',
+            'New employee onboarding process',
+            'What is the performance evaluation system',
+            'What procedures are needed for resignation',
+            'Training and development opportunities',
             'leave process',
             'annual leave',
             'employee benefits',
@@ -169,56 +185,56 @@
             'performance review',
             'resignation process',
             'training and development',
-            // 同义词测试
-            '我想休假几天',
+            // Synonym tests
+            'I want to take a few days off',
             'time off policy',
             'sick leave application',
-            '我要辞职',
-            '工资待遇如何',
+            'I want to resign',
+            'What about salary and benefits',
             'salary and benefits',
             'performance evaluation',
-            '工作表现评估',
-            // Token压力测试
-            '请详细说明公司所有的规章制度和福利待遇政策',
-            '我想了解公司的完整培训体系以及职业发展路径规划',
-            '请详细介绍员工手册中的所有条款和注意事项'
-        ];
+            'work performance assessment',
+            // Token pressure tests
+            'Please explain in detail all the company rules and benefit policies',
+            'I want to understand the complete training system and career development path planning',
+            'Please introduce in detail all the terms and precautions in the employee handbook'
+        ]
 
-        // 添加快速测试按钮
-        function addQuickTestButtons() {
-            const buttonsDiv = document.createElement('div');
-            buttonsDiv.style.marginBottom = '20px';
-            buttonsDiv.innerHTML = '<h3>快速测试：</h3>';
-            
+        // Add quick test buttons
+        function addQuickTestButtons () {
+            const buttonsDiv = document.createElement('div')
+            buttonsDiv.style.marginBottom = '20px'
+            buttonsDiv.innerHTML = '<h3>Quick Tests:</h3>'
+
             testQueries.forEach(query => {
-                const btn = document.createElement('button');
-                btn.textContent = query;
-                btn.style.cssText = 'margin: 5px; padding: 8px 12px; background: #f8f9fa; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; font-size: 12px;';
+                const btn = document.createElement('button')
+                btn.textContent = query
+                btn.style.cssText = 'margin: 5px; padding: 8px 12px; background: #f8f9fa; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; font-size: 12px;'
                 btn.onclick = () => {
-                    searchInput.value = query;
-                    searchForm.dispatchEvent(new Event('submit'));
-                };
-                buttonsDiv.appendChild(btn);
-            });
-            
-            searchForm.parentNode.insertBefore(buttonsDiv, searchForm.nextSibling);
+                    searchInput.value = query
+                    searchForm.dispatchEvent(new Event('submit'))
+                }
+                buttonsDiv.appendChild(btn)
+            })
+
+            searchForm.parentNode.insertBefore(buttonsDiv, searchForm.nextSibling)
         }
 
-        async function performSearch(query) {
-            searchBtn.disabled = true;
-            searchBtn.textContent = '🔄 搜索中...';
-            resultsDiv.innerHTML = '<div class="loading">正在搜索匹配文档...</div>';
+        async function performSearch (query) {
+            searchBtn.disabled = true
+            searchBtn.textContent = '🔄 Searching...'
+            resultsDiv.innerHTML = '<div class="loading">Searching for matching documents...</div>'
 
             try {
-                // 尝试多个可能的API端点
+                // Try multiple possible API endpoints
                 const apiUrls = [
                     'http://localhost:5000/api/search-debug',
                     '/api/search-debug'
-                ];
-                
-                let response;
-                let lastError;
-                
+                ]
+
+                let response
+                let lastError
+
                 for (const apiUrl of apiUrls) {
                     try {
                         response = await fetch(apiUrl, {
@@ -227,171 +243,172 @@
                                 'Content-Type': 'application/json;charset=UTF-8'
                             },
                             body: JSON.stringify({ query: query })
-                        });
-                        
+                        })
+
                         if (response.ok) {
-                            break;
+                            break
                         }
                     } catch (err) {
-                        lastError = err;
-                        continue;
+                        lastError = err
+                        continue
                     }
                 }
-                
+
                 if (!response || !response.ok) {
-                    throw new Error(lastError?.message || `无法连接到后端服务。请确保后端服务运行在 http://localhost:5000`);
+                    throw new Error(lastError?.message || `Unable to connect to backend service. Please ensure backend service is running at http://localhost:5000`)
                 }
 
-                const data = await response.json();
-                displayResults(data, query);
+                const data = await response.json()
+                displayResults(data, query)
 
             } catch (error) {
-                console.error('搜索失败:', error);
+                console.error('Search failed:', error)
                 resultsDiv.innerHTML = `
                     <div class="error">
-                        <strong>搜索失败:</strong> ${error.message}<br>
-                        <strong>解决方案:</strong><br>
-                        1. 确保后端服务已启动: python simple_offline_backend.py<br>
-                        2. 检查后端是否运行在 http://localhost:5000<br>
-                        3. 检查是否有防火墙阻止连接
+                        <strong>Search failed:</strong> ${error.message}<br>
+                        <strong>Solutions:</strong><br>
+                        1. Ensure backend service is started: python simple_offline_backend.py<br>
+                        2. Check if backend is running at http://localhost:5000<br>
+                        3. Check if firewall is blocking the connection
                     </div>
-                `;
+                `
             } finally {
-                searchBtn.disabled = false;
-                searchBtn.textContent = '🔍 测试搜索匹配';
+                searchBtn.disabled = false
+                searchBtn.textContent = '🔍 Test Search Matching'
             }
         }
 
-        function displayResults(data, query) {
-            let html = '';
+        function displayResults (data, query) {
+            let html = ''
 
-            // 调试信息
+            // Debug information
             if (data.debug) {
                 html += `
                     <div class="debug-info">
-                        <strong>🔍 调试信息:</strong><br>
-                        原始查询: "${data.debug.original_query}"<br>
-                        提取关键词: [${data.debug.keywords.map(k => `"${k}"`).join(', ')}]<br>
-                        搜索耗时: ${data.debug.search_time || 'N/A'}ms<br>
-                        匹配文档数: ${data.debug.matched_docs || 0}<br>
-                        总文档数: ${data.debug.total_docs || 0}
+                        <strong>🔍 Debug Information:</strong><br>
+                        Original query: "${data.debug.original_query}"<br>
+                        Extracted keywords: [${data.debug.keywords.map(k => `"${k}"`).join(', ')}]<br>
+                        Search time: ${data.debug.search_time || 'N/A'}ms<br>
+                        Matched documents: ${data.debug.matched_docs || 0}<br>
+                        Total documents: ${data.debug.total_docs || 0}
                     </div>
-                `;
+                `
             }
 
-            // 关键词显示
+            // Keywords display
             if (data.debug && data.debug.keywords) {
                 html += `
                     <div class="keywords">
-                        <strong>🎯 提取的关键词:</strong><br>
+                        <strong>🎯 Extracted Keywords:</strong><br>
                         ${data.debug.keywords.map(k => `<span class="keyword">${k}</span>`).join('')}
                     </div>
-                `;
+                `
             }
 
-            // 搜索结果
+            // Search results
             if (data.results && data.results.length > 0) {
-                html += `<h3>📄 匹配的文档 (${data.results.length} 个):</h3>`;
-                
+                html += `<h3>📄 Matched Documents (${data.results.length}):</h3>`
+
                 data.results.forEach((result, index) => {
                     html += `
                         <div class="result-item">
                             <div class="result-title">
                                 ${result.title}
-                                <span class="result-score">匹配度: ${(result.score * 100).toFixed(1)}%</span>
+                                <span class="result-score">Match rate: ${(result.score * 100).toFixed(1)}%</span>
                             </div>
                             <div class="result-content">
                                 ${result.content.substring(0, 200)}...
                             </div>
                         </div>
-                    `;
-                });
+                    `
+                })
             } else {
                 html += `
                     <div class="error">
-                        ❌ 没有找到匹配的文档
-                        ${data.debug ? `<br>建议: 尝试使用关键词如 "请假"、"年假"、"入职"、"福利" 等` : ''}
+                        ❌ No matching documents found
+                        ${data.debug ? `<br>Suggestion: Try using keywords like "leave", "annual leave", "onboarding", "benefits", etc.` : ''}
                     </div>
-                `;
+                `
             }
 
-            // LLM输入预览和Token优化信息
+            // LLM input preview and Token optimization information
             if (data.llm_input) {
-                const llmInput = data.llm_input;
-                const tokenEstimate = llmInput.token_estimate || 0;
-                const optimizedDocs = llmInput.optimized_documents || [];
-                
+                const llmInput = data.llm_input
+                const tokenEstimate = llmInput.token_estimate || 0
+                const optimizedDocs = llmInput.optimized_documents || []
+
                 html += `
                     <div class="debug-info" style="background: #e8f5e8; border-color: #c3e6c3;">
-                        <strong>🤖 LLM输入优化信息:</strong><br>
-                        📊 原始匹配文档数: ${llmInput.total_matches || 0}<br>
-                        📝 优化后文档数: ${optimizedDocs.length}<br>
-                        🎯 预估Token数: ${tokenEstimate.toLocaleString()}<br>
-                        🚨 Token状态: ${tokenEstimate > 3500 ? '⚠️ 超出建议值' : tokenEstimate > 2500 ? '⚡ 接近限制' : '✅ 安全范围'}
+                        <strong>🤖 LLM Input Optimization Information:</strong><br>
+                        📊 Original matched documents: ${llmInput.total_matches || 0}<br>
+                        📝 Optimized documents: ${optimizedDocs.length}<br>
+                        🎯 Estimated tokens: ${tokenEstimate.toLocaleString()}<br>
+                        🚨 Token status: ${tokenEstimate > 3500 ? '⚠️ Exceeds recommended value' : tokenEstimate > 2500 ? '⚡ Close to limit' : '✅ Safe range'}
                     </div>
-                `;
-                
-                // 显示优化后的文档
+                `
+
+                // Display optimized documents
                 if (optimizedDocs.length > 0) {
                     html += `
                         <div class="debug-info" style="background: #f0f8ff; border-color: #b3d9ff;">
-                            <strong>📄 优化后的文档内容:</strong><br>
-                    `;
-                    
+                            <strong>📄 Optimized Document Content:</strong><br>
+                    `
+
                     optimizedDocs.forEach((doc, index) => {
-                        const isTruncated = doc.truncated;
-                        const truncatedFlag = isTruncated ? ' 📄[已截断]' : ' 📄[完整]';
+                        const isTruncated = doc.truncated
+                        const truncatedFlag = isTruncated ? ' 📄[Truncated]' : ' 📄[Complete]'
                         html += `
                             <div style="margin-bottom: 15px; padding: 10px; background: white; border-radius: 4px;">
                                 <strong>${index + 1}. ${doc.title}${truncatedFlag}</strong> 
-                                <span class="result-score">匹配度: ${(doc.score * 100).toFixed(1)}%</span><br>
+                                <span class="result-score">Match rate: ${(doc.score * 100).toFixed(1)}%</span><br>
                                 <div style="margin-top: 5px; color: #666; line-height: 1.4; max-height: 150px; overflow-y: auto;">
                                     ${doc.content.substring(0, 300)}${doc.content.length > 300 ? '...' : ''}
                                 </div>
                             </div>
-                        `;
-                    });
-                    
-                    html += `</div>`;
+                        `
+                    })
+
+                    html += `</div>`
                 }
-                
-                // 完整的LLM输入数据（折叠显示）
+
+                // Complete LLM input data (collapsible display)
                 html += `
                     <details style="margin-top: 15px;">
                         <summary style="cursor: pointer; color: #007bff; font-weight: bold;">
-                            📋 查看完整LLM输入数据
+                            📋 View Complete LLM Input Data
                         </summary>
                         <pre style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 4px; white-space: pre-wrap; word-wrap: break-word; font-size: 12px;">${JSON.stringify(data.llm_input, null, 2)}</pre>
                     </details>
-                `;
+                `
             }
 
-            resultsDiv.innerHTML = html;
+            resultsDiv.innerHTML = html
         }
 
-        // 事件监听
+        // Event listeners
         searchForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const query = searchInput.value.trim();
+            e.preventDefault()
+            const query = searchInput.value.trim()
             if (query) {
-                performSearch(query);
+                performSearch(query)
             }
-        });
+        })
 
-        // 页面加载完成后添加快速测试按钮
+        // Add quick test buttons after page load
         document.addEventListener('DOMContentLoaded', () => {
-            addQuickTestButtons();
-            // 显示服务状态检查
+            addQuickTestButtons()
+            // Display service status check
             resultsDiv.innerHTML = `
                 <div class="debug-info" style="background: #fff3cd; border-color: #ffeaa7;">
-                    <strong>📋 使用说明:</strong><br>
-                    1. 请确保后端服务已启动: python simple_offline_backend.py<br>
-                    2. 后端服务应该运行在 http://localhost:5000<br>
-                    3. 输入问题后点击搜索按钮进行测试<br>
-                    4. 可以使用下方的快速测试按钮
+                    <strong>📋 Instructions:</strong><br>
+                    1. Please ensure backend service is started: python simple_offline_backend.py<br>
+                    2. Backend service should be running at http://localhost:5000<br>
+                    3. Enter a question and click the search button to test<br>
+                    4. You can use the quick test buttons below
                 </div>
-            `;
+            `
         });
     </script>
 </body>
+
 </html>

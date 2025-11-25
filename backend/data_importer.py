@@ -1,8 +1,9 @@
 """
-Confluence文档数据导入工具
-用于一次性将Confluence文档导入到本地向量库
+Confluence Document Data Import Tool
+For importing Confluence documents into local vector database
 """
 import os
+import sys
 import json
 import requests
 from bs4 import BeautifulSoup
@@ -12,11 +13,14 @@ from sentence_transformers import SentenceTransformer
 import tiktoken
 import logging
 from datetime import datetime
+# Import configuration
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from config import Config
 
-# 加载环境变量
+# Load environment variables
 load_dotenv()
 
-# 配置日志
+# Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -27,33 +31,33 @@ class ConfluenceDataImporter:
         self.api_token = os.getenv('CONFLUENCE_API_TOKEN')
         self.auth = (self.username, self.api_token)
         
-        # 本地存储路径
-        self.data_dir = './data'
+        # Local storage path
+        self.data_dir = '../data'
         self.export_file = os.path.join(self.data_dir, 'confluence_export.json')
         
-        # 确保数据目录存在
+        # Ensure data directory exists
         os.makedirs(self.data_dir, exist_ok=True)
         
-        # 初始化嵌入模型
-        self.embedding_model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
+        # Initialize embedding model
+        self.embedding_model = SentenceTransformer(Config.SENTENCE_TRANSFORMER_MODEL)
         
-        # 初始化ChromaDB
+        # Initialize ChromaDB
         self.chroma_client = chromadb.PersistentClient(path=os.getenv('CHROMA_DB_PATH', './chroma_db'))
         self.collection = self.chroma_client.get_or_create_collection(name="confluence_docs")
     
     def get_spaces(self):
-        """获取所有空间"""
+        """Get all spaces"""
         try:
             url = f"{self.base_url}/wiki/rest/api/space"
             response = requests.get(url, auth=self.auth)
             response.raise_for_status()
             return response.json()
         except Exception as e:
-            logger.error(f"获取空间失败: {str(e)}")
+            logger.error(f"Failed to get spaces: {str(e)}")
             return None
     
     def get_pages_in_space(self, space_key, limit=100):
-        """获取空间中的所有页面"""
+        """Get all pages in space"""
         try:
             url = f"{self.base_url}/wiki/rest/api/content"
             params = {
@@ -65,11 +69,11 @@ class ConfluenceDataImporter:
             response.raise_for_status()
             return response.json()
         except Exception as e:
-            logger.error(f"获取页面失败: {str(e)}")
+            logger.error(f"Failed to get pages: {str(e)}")
             return None
     
     def get_page_content(self, page_id):
-        """获取页面内容"""
+        """Get page content"""
         try:
             url = f"{self.base_url}/wiki/rest/api/content/{page_id}"
             params = {'expand': 'body.view,version'}
@@ -77,16 +81,16 @@ class ConfluenceDataImporter:
             response.raise_for_status()
             return response.json()
         except Exception as e:
-            logger.error(f"获取页面内容失败: {str(e)}")
+            logger.error(f"Failed to get page content: {str(e)}")
             return None
     
     def clean_html_content(self, html_content):
-        """清理HTML内容，提取纯文本"""
+        """Clean HTML content and extract plain text"""
         soup = BeautifulSoup(html_content, 'html.parser')
         return soup.get_text(strip=True)
     
     def chunk_text(self, text, max_tokens=800):
-        """将文本分块，避免超出token限制"""
+        """Chunk text to avoid exceeding token limits"""
         encoding = tiktoken.encoding_for_model("gpt-3.5-turbo")
         tokens = encoding.encode(text)
         
@@ -109,20 +113,20 @@ class ConfluenceDataImporter:
         return chunks
     
     def export_all_docs(self):
-        """导出所有Confluence文档到本地JSON文件"""
-        logger.info("开始导出Confluence文档...")
+        """Export all Confluence documents to local JSON file"""
+        logger.info("Starting to export Confluence documents...")
         
         all_docs = []
         spaces = self.get_spaces()
         
         if not spaces:
-            logger.error("无法获取空间信息")
+            logger.error("Failed to get space information")
             return False
         
         for space in spaces.get('results', []):
             space_key = space.get('key')
             space_name = space.get('name', space_key)
-            logger.info(f"正在处理空间: {space_name} ({space_key})")
+            logger.info(f"Processing space: {space_name} ({space_key})")
             
             pages = self.get_pages_in_space(space_key)
             if not pages:
@@ -132,7 +136,7 @@ class ConfluenceDataImporter:
                 page_id = page.get('id')
                 page_title = page.get('title', '')
                 
-                logger.info(f"正在导出页面: {page_title}")
+                logger.info(f"Exporting page: {page_title}")
                 
                 page_data = self.get_page_content(page_id)
                 if not page_data:
@@ -143,7 +147,7 @@ class ConfluenceDataImporter:
                 )
                 url = f"{self.base_url}/wiki/pages/viewpage.action?pageId={page_id}"
                 
-                # 保存完整文档信息
+                # Save complete document information
                 doc_info = {
                     'id': page_id,
                     'title': page_title,
@@ -156,7 +160,7 @@ class ConfluenceDataImporter:
                 
                 all_docs.append(doc_info)
         
-        # 保存到本地文件
+        # Save to local file
         export_data = {
             'export_time': datetime.now().isoformat(),
             'total_docs': len(all_docs),
@@ -166,16 +170,16 @@ class ConfluenceDataImporter:
         with open(self.export_file, 'w', encoding='utf-8') as f:
             json.dump(export_data, f, ensure_ascii=False, indent=2)
         
-        logger.info(f"成功导出 {len(all_docs)} 个文档到 {self.export_file}")
+        logger.info(f"Successfully exported {len(all_docs)} documents to {self.export_file}")
         return True
     
     def import_to_vector_db(self):
-        """从本地JSON文件导入到向量数据库"""
+        """Import from local JSON file to vector database"""
         if not os.path.exists(self.export_file):
-            logger.error(f"导出文件不存在: {self.export_file}")
+            logger.error(f"Export file does not exist: {self.export_file}")
             return False
         
-        logger.info("开始导入文档到向量数据库...")
+        logger.info("Starting to import documents to vector database...")
         
         with open(self.export_file, 'r', encoding='utf-8') as f:
             export_data = json.load(f)
@@ -191,7 +195,7 @@ class ConfluenceDataImporter:
             space_key = doc['space_key']
             page_id = doc['id']
             
-            # 分块处理
+            # Chunk processing
             chunks = self.chunk_text(content)
             for i, chunk in enumerate(chunks):
                 documents.append(f"{title}\n\n{chunk}")
@@ -204,19 +208,19 @@ class ConfluenceDataImporter:
                 })
                 ids.append(f"{page_id}_{i}")
         
-        # 生成嵌入
-        logger.info("正在生成文档嵌入...")
+        # Generate embeddings
+        logger.info("Generating document embeddings...")
         embeddings = self.embedding_model.encode(documents)
         
-        # 清空现有集合
+        # Clear existing collection
         try:
             self.collection.delete()
             self.collection = self.chroma_client.get_or_create_collection(name="confluence_docs")
         except:
             pass
         
-        # 添加到ChromaDB
-        logger.info("正在保存到向量数据库...")
+        # Add to ChromaDB
+        logger.info("Saving to vector database...")
         self.collection.add(
             embeddings=embeddings.tolist(),
             documents=documents,
@@ -224,45 +228,63 @@ class ConfluenceDataImporter:
             ids=ids
         )
         
-        logger.info(f"成功导入 {len(documents)} 个文档块到向量数据库")
+        logger.info(f"Successfully imported {len(documents)} document chunks to vector database")
         return True
     
     def full_import(self):
-        """完整导入流程：导出文档 + 导入向量库"""
-        logger.info("开始完整导入流程...")
+        """Complete import process: export documents + import to vector database"""
+        logger.info("Starting complete import process...")
         
-        # 1. 导出文档到本地
+        # 1. Export documents to local
         if not self.export_all_docs():
-            logger.error("文档导出失败")
+            logger.error("Document export failed")
             return False
         
-        # 2. 导入到向量数据库
+        # 2. Import to vector database
         if not self.import_to_vector_db():
-            logger.error("向量数据库导入失败")
+            logger.error("Vector database import failed")
             return False
         
-        logger.info("完整导入流程完成！")
+        logger.info("Complete import process finished!")
         return True
 
 def main():
-    """主函数"""
+    """Main function"""
+    # Check if command line argument is provided
+    if len(sys.argv) > 1:
+        mode = sys.argv[1].lower()
+    else:
+        # Interactive mode if no command line argument
+        importer = ConfluenceDataImporter()
+        
+        print("Confluence Document Import Tool")
+        print("1. Export documents to local")
+        print("2. Import from local to vector database")
+        print("3. Complete import")
+        
+        choice = input("Please select an operation (1/2/3): ").strip()
+        
+        if choice == '1':
+            importer.export_all_docs()
+        elif choice == '2':
+            importer.import_to_vector_db()
+        elif choice == '3':
+            importer.full_import()
+        else:
+            print("Invalid choice")
+        return
+    
+    # Command line mode
     importer = ConfluenceDataImporter()
     
-    print("Confluence文档导入工具")
-    print("1. 导出文档到本地")
-    print("2. 从本地导入向量库")
-    print("3. 完整导入")
-    
-    choice = input("请选择操作 (1/2/3): ").strip()
-    
-    if choice == '1':
+    if mode == 'export':
         importer.export_all_docs()
-    elif choice == '2':
+    elif mode == 'import':
         importer.import_to_vector_db()
-    elif choice == '3':
+    elif mode == 'full':
         importer.full_import()
     else:
-        print("无效选择")
+        print("Usage: python data_importer.py [export|import|full]")
 
 if __name__ == "__main__":
     main()
