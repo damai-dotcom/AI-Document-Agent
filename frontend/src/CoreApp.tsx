@@ -219,13 +219,10 @@ export default function CoreApp() {
                   <div
                     key={index}
                     className="border-l-4 border-blue-500 pl-4 py-2">
-                    <div className="flex justify-between items-start mb-1">
+                    <div className="mb-1">
                       <h4 className="font-medium text-gray-900">
                         {result.title}
                       </h4>
-                      <span className="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                        {Math.round(result.score * 100)}%
-                      </span>
                     </div>
                     <p className="text-sm text-gray-600 line-clamp-2">
                       {result.content}
