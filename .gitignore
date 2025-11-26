@@ -103,6 +103,6 @@ models/*/
 # ChromaDB (optional - comment out if you want to include)
 # chroma_db/
 
-# Confluence data
-data/*.json
+# Confluence data (allow confluence_export.json to be included)
+!data/confluence_export.json
 !data/.gitkeep

@@ -38,8 +38,9 @@ export default function CoreApp() {
     callback: (displayText: string) => void
   ) => {
     let index = 0
-    const displayText = text.substring(0, index)
-    callback(displayText)
+
+    // Immediate initial update
+    callback(text.substring(0, index))
 
     const interval = setInterval(() => {
       index++
@@ -93,24 +94,27 @@ export default function CoreApp() {
           newMessages[newMessages.length - 1] = {
             ...newMessages[newMessages.length - 1],
             content: displayText,
-            isTyping: displayText !== aiAnswer,
+            isTyping: true, // Keep as true until typing is complete
           }
           return newMessages
         })
       })
 
-      // Clean up timer
+      // Ensure complete display and clean up
+      const totalDuration = Math.max(aiAnswer.length * 20, 1000) // Minimum 1 second
       setTimeout(() => {
         clearInterval(interval)
+        // Force update to show the complete answer
         setMessages((prev) => {
           const newMessages = [...prev]
           newMessages[newMessages.length - 1] = {
             ...newMessages[newMessages.length - 1],
+            content: aiAnswer, // Ensure full content is displayed
             isTyping: false,
           }
           return newMessages
         })
-      }, aiAnswer.length * 20 + 100)
+      }, totalDuration)
     } catch (err: any) {
       setError(err.message || 'Search failed')
       // Remove assistant message placeholder
