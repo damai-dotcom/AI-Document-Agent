@@ -1,0 +1,78 @@
+{
+  "export_time": "2024-01-01T00:00:00",
+  "total_docs": 8,
+  "docs": [
+    {
+      "id": "HR-001",
+      "title": "Employee Onboarding Process",
+      "content": "Welcome to our company! The onboarding process is designed to help new employees integrate smoothly into our organization. Day 1: Orientation session covering company culture, values, and policies. You will receive your employee badge, laptop, and access credentials. Day 2-3: Department introduction and team meetings. Your manager will assign a buddy to help you navigate the first few weeks. Week 1: Complete required compliance training and set up your workspace. Week 2-4: Begin working on assigned projects and attend regular team meetings. Throughout the first month, HR will schedule check-ins to ensure you have everything needed for success.",
+      "url": "https://company.wiki.com/hr/onboarding",
+      "space_key": "HR",
+      "space_name": "Human Resources",
+      "exported_at": "2024-01-01T00:00:00"
+    },
+    {
+      "id": "HR-002",
+      "title": "Leave and Time Off Policy",
+      "content": "Our company offers comprehensive leave benefits to support work-life balance. Annual Leave: Full-time employees receive 20 days per year, pro-rated for the first year. Sick Leave: 10 days per year for illness or medical appointments. Personal Leave: 5 days per year for personal matters. Parental Leave: 12 weeks paid leave for new parents. Bereavement Leave: 3 days for immediate family members. Public Holidays: All federally recognized holidays are observed. Leave requests must be submitted through the HR portal at least 2 weeks in advance for planned leave. Emergency leave should be communicated to your manager and HR as soon as possible. All leave balances can be viewed in the employee self-service portal.",
+      "url": "https://company.wiki.com/hr/leave-policy",
+      "space_key": "HR",
+      "space_name": "Human Resources",
+      "exported_at": "2024-01-01T00:00:00"
+    },
+    {
+      "id": "HR-003",
+      "title": "Employee Benefits and Compensation",
+      "content": "We offer competitive benefits package to support our employees' wellbeing. Health Insurance: Comprehensive medical, dental, and vision coverage with multiple plan options. Retirement Plan: 401(k) with company matching up to 6% of salary. Life Insurance: Basic life insurance equal to 2x annual salary, with option to purchase additional coverage. Wellness Program: Gym membership reimbursement, mental health support, and annual health screenings. Flexible Work Arrangements: Remote work options and flexible hours available for eligible positions. Professional Development: Annual budget for courses, certifications, and conference attendance. Performance Bonuses: Quarterly and annual bonuses based on individual and company performance. Stock Options: Equity grants for eligible employees after 1 year of service.",
+      "url": "https://company.wiki.com/hr/benefits",
+      "space_key": "HR",
+      "space_name": "Human Resources",
+      "exported_at": "2024-01-01T00:00:00"
+    },
+    {
+      "id": "IT-001",
+      "title": "IT Security Policy",
+      "content": "Information security is critical to protecting our company and client data. Password Requirements: Minimum 12 characters, including uppercase, lowercase, numbers, and special characters. Passwords must be changed every 90 days. Two-Factor Authentication: Mandatory for all remote access and sensitive systems. Device Security: All company devices must have encryption, antivirus software, and automatic updates enabled. Public WiFi: Never use public WiFi for work tasks without VPN. Data Classification: Understand data sensitivity levels and handle accordingly. Incident Reporting: Report any security incidents immediately to the IT security team. Email Security: Be cautious of phishing attempts and never share credentials via email. Software Installation: Only approved software can be installed on company devices. Remote Access: Use company-provided VPN and follow remote work security guidelines.",
+      "url": "https://company.wiki.com/it/security-policy",
+      "space_key": "IT",
+      "space_name": "Information Technology",
+      "exported_at": "2024-01-01T00:00:00"
+    },
+    {
+      "id": "IT-002",
+      "title": "Software Development Guidelines",
+      "content": "Our development team follows industry best practices to deliver high-quality software. Code Review: All code must be peer-reviewed before merging to main branches. Testing: Unit tests with minimum 80% coverage required for all new features. CI/CD Pipeline: Automated builds and deployments for all environments. Documentation: Code must be properly documented with clear comments and README files. Version Control: Follow Git flow branching strategy with feature branches. Code Standards: Adhere to language-specific coding standards and linting rules. Security: Follow OWASP security guidelines and conduct regular security assessments. Performance: Monitor application performance and optimize bottlenecks. Backup: Regular database and code backups with disaster recovery plans. Communication: Daily stand-ups and sprint planning meetings to ensure team alignment.",
+      "url": "https://company.wiki.com/it/dev-guidelines",
+      "space_key": "IT",
+      "space_name": "Information Technology",
+      "exported_at": "2024-01-01T00:00:00"
+    },
+    {
+      "id": "FIN-001",
+      "title": "Expense Reimbursement Process",
+      "content": "Streamlined process for employee expense reimbursement. Eligible Expenses: Business travel, meals with clients, office supplies, and approved training costs. Submission: All expenses must be submitted within 30 days of incurral through the expense management system. Receipts: Original receipts required for expenses over $25, digital copies acceptable. Approval Process: Direct manager approval required, then finance department review. Processing Time: Reimbursements processed within 5 business days of approval. Payment Method: Direct deposit to employee's bank account on file. Corporate Card: Available for frequent business travelers with pre-approved limits. Mileage: Reimbursement at current IRS rate for business-related vehicle use. Entertainment: Client entertainment expenses require pre-approval and client documentation. Non-Compliant: Expenses not following policy may be rejected or delayed.",
+      "url": "https://company.wiki.com/finance/expense-policy",
+      "space_key": "FIN",
+      "space_name": "Finance",
+      "exported_at": "2024-01-01T00:00:00"
+    },
+    {
+      "id": "OPS-001",
+      "title": "Remote Work Policy",
+      "content": "Flexible remote work options to support modern work preferences. Eligibility: Most positions eligible after 3 months of satisfactory performance. Work Hours: Core hours 10 AM - 3 PM for collaboration, flexible start/end times. Equipment: Company provides laptop, monitor, and ergonomic chair for home office. Communication: Must be available via Slack, email, and phone during work hours. Meetings: Attend all scheduled meetings via video conference when working remotely. Productivity: Maintain same productivity and quality standards as in-office work. Security: Follow IT security policies when working from home or other locations. Expenses: Home internet and phone stipends available for eligible remote workers. Office Visits: Monthly in-person team meetings and quarterly company all-hands required. Compliance: Follow all company policies regardless of work location.",
+      "url": "https://company.wiki.com/operations/remote-work",
+      "space_key": "OPS",
+      "space_name": "Operations",
+      "exported_at": "2024-01-01T00:00:00"
+    },
+    {
+      "id": "LEGAL-001",
+      "title": "Code of Conduct and Ethics",
+      "content": "Our commitment to ethical business practices and professional conduct. Integrity: Always act honestly and transparently in all business dealings. Confidentiality: Protect company and client information according to privacy policies. Compliance: Follow all applicable laws, regulations, and industry standards. Diversity and Inclusion: Treat all colleagues and clients with respect and dignity. Conflict of Interest: Disclose any potential conflicts and avoid situations that compromise judgment. Anti-Harassment: Zero tolerance for harassment, discrimination, or bullying. Gifts and Entertainment: Follow strict guidelines regarding accepting or offering gifts. Social Media: Maintain professional conduct on all social media platforms. Whistleblowing: Protected channels available for reporting concerns without fear of retaliation. Professional Development: Continuously improve skills and knowledge to better serve clients and the company.",
+      "url": "https://company.wiki.com/legal/code-of-conduct",
+      "space_key": "LEGAL",
+      "space_name": "Legal and Compliance",
+      "exported_at": "2024-01-01T00:00:00"
+    }
+  ]
+}
