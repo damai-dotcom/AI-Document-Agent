@@ -79,7 +79,10 @@ class LocalVectorSearch:
                     similarity_score = 1 / (1 + distance)
                     logger.info(f"Document {i+1}: Similarity={similarity_score:.4f}, Distance={distance:.4f}")
                     logger.info(f"  Title: {metadata.get('title', 'Unknown')}")
-                    logger.info(f"  Content preview: {doc[:100]}...")
+                    # Extract content after title for better preview
+                    preview_parts = doc.split('\n\n', 1)
+                    preview = preview_parts[1][:100] if len(preview_parts) > 1 else doc[:100]
+                    logger.info(f"  Content preview: {preview}...")
             else:
                 logger.warning("No documents found in search results")
             
@@ -197,16 +200,22 @@ Answer:"""
     def _generate_with_kimi(self, query, context):
         """Generate answer using Kimi"""
         try:
-            # Prepare document data
+            # Prepare document data using regex to properly parse documents
+            import re
             documents = []
-            for i, doc_content in enumerate(context.split('\n\n')):
-                if doc_content.startswith('Document snippet'):
-                    documents.append({
-                        'title': f'Document snippet {i+1}',
-                        'content': doc_content.replace(f'Document snippet {i+1}: ', ''),
-                        'category': 'Knowledge Base',
-                        'similarity': 0.8
-                    })
+            # Use regex to find all documents with their correct numbers and content
+            document_pattern = r'Document snippet (\d+):([\s\S]+?)(?=Document snippet \d+:|$)'
+            matches = re.finditer(document_pattern, context)
+            
+            for match in matches:
+                snippet_num = match.group(1)
+                content = match.group(2).strip()
+                documents.append({
+                    'title': f'Document snippet {snippet_num}',
+                    'content': content,
+                    'category': 'Knowledge Base',
+                    'similarity': 0.8
+                })
             
             # Log request sent to Kimi
             logger.info(f"Sending request to Kimi")
@@ -310,7 +319,10 @@ def search():
         # Log document information to be sent to LLM
         logger.info(f"Preparing to send {len(documents[:3])} documents to LLM")
         for i, doc in enumerate(documents[:3]):
-            logger.info(f"Document {i+1} for LLM: {doc[:100]}...")
+            # Extract content after title for better preview
+            preview_parts = doc.split('\n\n', 1)
+            preview = preview_parts[1][:100] if len(preview_parts) > 1 else doc[:100]
+            logger.info(f"Document {i+1} for LLM: {preview}...")
         
         # Generate answer using external LLM
         answer = ai_generator.generate_answer(query, documents[:3])
@@ -327,9 +339,14 @@ def search():
             # Calculate relevance score (0-1)
             score = 1 / (1 + distance)
             
+            # Extract actual content without title for better display
+            content_parts = doc.split('\n\n', 1)
+            actual_content = content_parts[1] if len(content_parts) > 1 else ''
+            
             result = {
                 'title': metadata['title'],
-                'content': doc,
+                'content': actual_content,  # Store actual content without title
+                'full_document': doc,      # Keep full document for reference
                 'url': metadata['url'],
                 'score': score,
                 'space_key': metadata.get('space_key', ''),
